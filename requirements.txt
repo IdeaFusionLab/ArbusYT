@@ -1,0 +1,3 @@
+youtube_dl
+python-dotenv
+discord.py
