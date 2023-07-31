@@ -6,7 +6,7 @@ import discord
 from discord import app_commands, Intents, Interaction, Client
 
 load_dotenv()
-DISCORD_BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN_YT')
+DISCORD_BOT_TOKEN_YT = os.getenv('DISCORD_BOT_TOKEN_YT')
 
 ytdl_opts = {
     'format': 'bestaudio/best',
@@ -108,4 +108,4 @@ async def play(interaction: Interaction, url: str):
 async def skip(interaction: Interaction):
     await bot.skip(interaction)
 
-bot.run(DISCORD_BOT_TOKEN)
+bot.run(DISCORD_BOT_TOKEN_YT)
