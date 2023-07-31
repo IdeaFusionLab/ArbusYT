@@ -1,5 +1,5 @@
 import os
-import youtube_dl
+from pytube import YouTube
 import discord
 from discord import app_commands, Intents, Interaction, Client
 from dotenv import load_dotenv
@@ -30,16 +30,16 @@ class MusicBot(Client):
             await channel.connect()
 
     async def play_audio_source(self, interaction: Interaction, url: str):
-        ytdl = youtube_dl.YoutubeDL(ytdl_opts)
-        info = ytdl.extract_info(url, download=False)
-        url2 = info['formats'][0]['url']
+        yt = YouTube(url)
+        video = yt.streams.filter(only_audio=True).first()
+        
         FFMPEG_OPTIONS = {
             'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
             'options': '-vn',
         }
         voice = interaction.guild.voice_client
         voice.stop()
-        audio_source = discord.FFmpegPCMAudio(url2, **FFMPEG_OPTIONS)
+        audio_source = discord.FFmpegPCMAudio(video.url, **FFMPEG_OPTIONS)
         voice.play(audio_source)
 
     async def on_ready(self):
