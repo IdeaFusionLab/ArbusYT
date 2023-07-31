@@ -6,7 +6,7 @@ import discord
 from discord import app_commands, Intents, Interaction, Client
 
 load_dotenv()
-DISCORD_BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN')
+DISCORD_BOT_TOKEN = os.getenv('DISCORD_BOT_TOKEN_YT')
 
 ytdl_opts = {
     'format': 'bestaudio/best',
