@@ -8,6 +8,8 @@ from discord import app_commands, Intents, Interaction, Client
 load_dotenv()
 DISCORD_BOT_TOKEN_YT = os.getenv('DISCORD_BOT_TOKEN_YT')
 
+DOMAINS = ['youtube','youtu.be']
+
 ytdl_opts = {
     'format': 'bestaudio/best',
     'postprocessors': [{
@@ -80,6 +82,15 @@ class MusicBot(Client):
 
 bot = MusicBot(intents=Intents.default())
 
+def check_yt_url(url):
+    url_in_domain = False
+    for domain in DOMAINS:
+        if domain in url:
+            url_in_domain = True
+    return url_in_domain
+
+#Commands
+
 @bot.tree.command()
 async def join(interaction: Interaction):
     await bot.join_voice_channel(interaction)
@@ -91,6 +102,9 @@ async def stop(interaction: Interaction):
 
 @bot.tree.command()
 async def play(interaction: Interaction, url: str):
+    if not check_yt_url(url):
+        await interaction.response.send_message("Url no valida.")
+        return
     if interaction.user.voice is None:
         await interaction.response.send_message("Debes estar en un canal de voz para usar este comando.")
     else:
@@ -101,7 +115,7 @@ async def play(interaction: Interaction, url: str):
 
         await interaction.response.send_message(f'Agregado a la cola: {url}')
         
-        if not bot.channel.guild.voice_client.source:
+        if not bot.channel.guild.voice_client.is_playing():
            await bot.play_next()
         
 @bot.tree.command()
