@@ -1,6 +1,7 @@
-from pytube import YouTube
+from pytube import YouTube, Playlist
 import discord
 from discord import app_commands, Intents, Interaction, Client
+import asyncio
 
 from config import DISCORD_BOT_TOKEN_YT, DOMAINS, FFMPEG_OPTIONS
 
@@ -55,14 +56,27 @@ class MusicBot(Client):
 
         await self.play_next()
 
-    async def leave_voice_channel(self, interaction: Interaction):
+    async def leave_voice_channel(self, interaction: Interaction, afk = False):
         if interaction.guild.voice_client is not None:
             await interaction.guild.voice_client.disconnect()
             bot.channel = None
             bot.queue = []
-            await interaction.response.send_message(
-                'He abandonado el canal de voz.'
-            )
+            if not afk:
+                await interaction.response.send_message(
+                    'He abandonado el canal de voz.'
+                )
+
+    async def check_and_disconnect(self, interaction: Interaction):
+        while True:
+            await asyncio.sleep(3 * 60)  # Espera 3 minutos
+
+            if (
+                self.channel is not None
+                and not self.channel.guild.voice_client.is_playing()
+                and len(self.queue) == 0
+            ):
+                await self.leave_voice_channel(interaction,True)
+                break
 
     async def on_ready(self):
         print(f'{self.user} se ha conectado a Discord!')
@@ -103,16 +117,23 @@ async def play(interaction: Interaction, url: str):
         await interaction.response.send_message(
             "Debes estar en un canal de voz para usar este comando."
         )
+        return
     else:
         if not bot.channel:
             await bot.join_voice_channel(interaction)
 
         bot.enqueue(url)
-
         await interaction.response.send_message(f'Agregado a la cola: {url}')
+
+        if "&list" in url:
+            playlist = Playlist(url)
+            # Agregamos los demas videos si es una playlist
+            for video_url in playlist.video_urls:
+                bot.enqueue(video_url)
 
         if not bot.channel.guild.voice_client.is_playing():
             await bot.play_next()
+            bot.loop.create_task(bot.check_and_disconnect(interaction))
 
 
 @bot.tree.command()
