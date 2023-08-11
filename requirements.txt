@@ -2,3 +2,4 @@ pytube
 python-dotenv
 discord.py
 PyNaCl
+asyncio
