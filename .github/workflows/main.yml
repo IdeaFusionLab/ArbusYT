@@ -12,9 +12,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: List current directory
-      run: ls -la
-
     - name: Set up Python
       uses: actions/setup-python@v3
       with:
@@ -22,7 +19,6 @@ jobs:
 
     - name: Install dependencies
       run: |
-        cd ArbusYT
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
