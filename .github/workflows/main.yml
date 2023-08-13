@@ -32,7 +32,7 @@ jobs:
 
     - name: Deploy to server
       run: |
-        echo "${{ secrets.SERVER_PASSWORD }}" | sshpass rsync -avz --delete ./ kamikeys@devsan.es:/home/bots/botsDiscord/ArbusYT/ -e "ssh -o StrictHostKeyChecking=no"
+        echo "${{ secrets.SERVER_PASSWORD }}" | sshpass rsync -avz ./ kamikeys@devsan.es:/home/bots/botsDiscord/ArbusYT/ -e "ssh -o StrictHostKeyChecking=no"
       env:
         SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
 
