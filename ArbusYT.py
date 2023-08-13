@@ -138,7 +138,7 @@ async def play(interaction: Interaction, url: str):
         for video_url in video_urls:
             bot.enqueue(video_url)
 
-    # Reproduce video if none video is playing
+    # Reproduce video if none video is playing AAAAAAAAAA
     if not bot.channel.guild.voice_client.is_playing():
         await bot.play_next(interaction)
         bot.loop.create_task(bot.check_and_disconnect(interaction))
