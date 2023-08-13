@@ -1,0 +1,44 @@
+name: Python CI & Deploy
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        cd ArbusYT
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install sshpass
+      run: sudo apt-get install -y sshpass
+
+    - name: Deploy to server
+      run: |
+        echo "${{ secrets.SERVER_PASSWORD }}" | sshpass rsync -avz --delete ./ArbusYT/ kamikeys@devsan.es:/home/bots/botsDiscord/ArbusYT/ -e "ssh -o StrictHostKeyChecking=no"
+      env:
+        SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+
+    - name: Restart arbus-yt.service
+      run: |
+        echo "${{ secrets.SERVER_PASSWORD }}" | sshpass ssh -o StrictHostKeyChecking=no kamikeys@devsan.es "echo ${{ secrets.SERVER_PASSWORD }} | sudo -S systemctl restart arbus-yt.service"
+      env:
+        SERVER_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
