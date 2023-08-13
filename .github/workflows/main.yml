@@ -12,6 +12,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: List current directory
+      run: ls -la
+
     - name: Set up Python
       uses: actions/setup-python@v3
       with:
