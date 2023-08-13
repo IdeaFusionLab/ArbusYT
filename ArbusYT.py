@@ -50,7 +50,7 @@ class MusicBot(Client):
 
     def enqueue(self, url: str):
         self.queue.append(url)
-
+    #hola
     async def play_next(self, interaction):
         if not bot.channel.guild.voice_client.is_playing():
             if len(self.queue) > 0:
